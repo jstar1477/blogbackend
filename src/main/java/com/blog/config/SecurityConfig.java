@@ -38,15 +38,16 @@ public class SecurityConfig {
 	public SecurityFilterChain chain(HttpSecurity http) {
 		http.csrf(csrf->csrf.disable())
 		.cors(cors->cors.configurationSource(configurationSource()))
-		 .exceptionHandling(exception -> exception
-            .authenticationEntryPoint((request, response, authException) -> {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
-            })
-        )
+		 
 			.authorizeHttpRequests(auth->auth
 			.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 			.requestMatchers("/api/auth/**").permitAll()
 			.anyRequest().authenticated())
+			.exceptionHandling(exception -> exception
+            .authenticationEntryPoint((request, response, authException) -> {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+            })
+        )
 			.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
 			
 		return http.build();
