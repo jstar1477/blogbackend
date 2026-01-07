@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.blog.posts.Post;
+import com.blog.posts.PostDetailsDTO;
 import com.blog.posts.PostRepository;
+import com.blog.users.UserRepository;
 
 @RestController
 @RequestMapping("/api/public")
@@ -23,6 +25,9 @@ public class PublicController {
 
 	@Autowired
 	PostRepository repo;
+
+	@Autowired
+	UserRepository urepo;
 	
 	
 	@GetMapping("/posts")
@@ -32,9 +37,17 @@ public class PublicController {
 	}
 	
 	@GetMapping("/posts/{id}")
-	public ResponseEntity<Post> getPostById(@PathVariable Long id) {
+	public ResponseEntity<PostDetailsDTO> getPostById(@PathVariable Long id) {
 	    Post post = repo.findById(id).orElseThrow(() -> new RuntimeException("Post not found"));
-	    return ResponseEntity.ok(post);
+		PostDetailsDTO postDetails = new PostDetailsDTO();
+		postDetails.setId(post.getId());
+		postDetails.setTitle(post.getTitle());
+		postDetails.setContent(post.getContent());
+		postDetails.setStatus(post.getStatus());
+		postDetails.setCreatedAt(post.getCreatedAt());
+		postDetails.setUpdatedAt(post.getUpdatedAt());
+		urepo.findById(post.getAuthor()).ifPresent(user->postDetails.setAuthorName(user.getName()));
+	    return ResponseEntity.ok(postDetails);
 	}
 
 }
