@@ -20,34 +20,36 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Component
-public class JwtAuthFilter extends OncePerRequestFilter{
+public class JwtAuthFilter extends OncePerRequestFilter {
 	@Autowired
 	JwtUtils util;
-	
+
 	@Autowired
 	UserRepository repo;
-	
+
 	@Override
 	protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain)
 			throws ServletException, IOException {
 		String header = req.getHeader("Authorization");
-		if(header!=null && header.startsWith("Bearer ")) {
+		if (header != null && header.startsWith("Bearer ")) {
 			String token = header.substring(7);
-			if(util.validateToken(token)) {
+			if (util.validateToken(token)) {
 				String email = util.extractEmail(token);
-				User user = repo.findByEmail(email).orElseThrow(()->new RuntimeException("User not found"));
-				UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null,List.of());
+				User user = repo.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+				UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null,
+						List.of());
 				SecurityContextHolder.getContext().setAuthentication(authToken);
 			}
 		}
-		
+
 		filterChain.doFilter(req, res);
-		
+
 	}
-	
+
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-		return request.getServletPath().startsWith("/api/auth");
+		String path = request.getServletPath();
+		return path.startsWith("/api/auth") || path.startsWith("/api/public");
+
 	}
-	
-	
+
 }
