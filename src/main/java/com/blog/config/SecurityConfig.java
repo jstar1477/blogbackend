@@ -43,11 +43,6 @@ public class SecurityConfig {
 			.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 			.requestMatchers("/api/auth/**").permitAll()
 			.anyRequest().authenticated())
-			.exceptionHandling(exception -> exception
-            .authenticationEntryPoint((request, response, authException) -> {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
-            })
-        )
 			.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
 			
 		return http.build();
@@ -56,7 +51,7 @@ public class SecurityConfig {
 	@Bean
 	public CorsConfigurationSource configurationSource() {
 		CorsConfiguration config = new CorsConfiguration();
-		config.setAllowedOrigins(List.of("http://localhost:3000"));
+		config.setAllowedOrigins(List.of("http://https://blogfrontend-teal.vercel.app/","*"));
 		config.setAllowedMethods(List.of("GET","POST","DELETE","PUT","OPTIONS"));
 		config.setAllowedHeaders(List.of("*"));
 		config.setAllowCredentials(true);
