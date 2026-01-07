@@ -51,7 +51,7 @@ public class SecurityConfig {
 	@Bean
 	public CorsConfigurationSource configurationSource() {
 		CorsConfiguration config = new CorsConfiguration();
-		config.setAllowedOrigins(List.of("http://https://blogfrontend-teal.vercel.app/","*"));
+		config.setAllowedOrigins(List.of("http://https://blogfrontend-teal.vercel.app/"));
 		config.setAllowedMethods(List.of("GET","POST","DELETE","PUT","OPTIONS"));
 		config.setAllowedHeaders(List.of("*"));
 		config.setAllowCredentials(true);
